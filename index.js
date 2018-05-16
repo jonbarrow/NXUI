@@ -78,31 +78,6 @@ ipcMain.on('pick_games_path', event => {
 
 ipcMain.on('ready', event => {
 	const rom_list = game_storage.toJSON();
-	for (const rom of rom_list) {
-		if (rom.type == 'nro') {
-			const metadata = NXReader.parseNRO(rom.path);
-			if (metadata.is_homebrew) {
-				const nro_stream = fs.openSync(rom.path, 'r');
-				const nro_size = Buffer.alloc(4);
-				fs.readSync(nro_stream, nro_size, 0, 4, 0x18);
-
-				metadata.homebrew.asset_section_headers.icon.file_offset.swap64();
-				metadata.homebrew.asset_section_headers.icon.size.swap64();
-
-				let icon_offset = metadata.homebrew.asset_section_headers.icon.file_offset;
-				let icon_size = metadata.homebrew.asset_section_headers.icon.size;
-				icon_offset = (icon_offset.readUInt32BE() << 8) + icon_offset.readUInt32BE(4) + nro_size.readUInt32LE();
-				icon_size = (icon_size.readUInt32BE() << 8) + icon_size.readUInt32BE(4);
-				
-				const nro_icon = Buffer.alloc(icon_size);
-				fs.readSync(nro_stream, nro_icon, 0, icon_size, icon_offset);
-
-				rom.icon = `data:image/jpg;base64,${nro_icon.toString('base64')}`;
-			} else {
-				rom.icon =`${LOCAL_RESOURCES_ROOT}/default_icon.jpg`;
-			}
-		}
-	}
 
 	event.sender.send('rom_list', rom_list);
 });
@@ -223,6 +198,7 @@ async function updateGameCache() {
 			continue;
 		}
 
+		const rom_path = path.join(src, file);
 		let metadata;
 		switch (path.extname(file)) {
 			case '.nca':
@@ -242,7 +218,7 @@ async function updateGameCache() {
 						type: 'nca',
 						title: NCA_metadata.applications[0].name,
 						icon: `${DATA_ROOT}/cache/images/${NCA_metadata.applications[0].id}/icon.jpg`,
-						path: path.join(src, file),
+						path: rom_path,
 						extended: NCA_metadata
 					};
 				} else {
@@ -250,7 +226,7 @@ async function updateGameCache() {
 						type: 'nca',
 						title: file,
 						icon: `${LOCAL_RESOURCES_ROOT}/default_icon.jpg`,
-						path: path.join(src, file)
+						path: rom_path
 					};
 				}
 
@@ -259,8 +235,41 @@ async function updateGameCache() {
 				metadata = {
 					type: 'nro',
 					title: file,
-					path: path.join(src, file)
+					path: rom_path,
+					icon: `${LOCAL_RESOURCES_ROOT}/default_icon.jpg`
 				};
+
+				const nro_metadata = NXReader.parseNRO(rom_path);
+				if (nro_metadata.is_homebrew) {
+					const nro_stream = fs.openSync(rom_path, 'r');
+					const nro_size = Buffer.alloc(4);
+					fs.readSync(nro_stream, nro_size, 0, 4, 0x18);
+
+					nro_metadata.homebrew.asset_section_headers.icon.file_offset.swap64();
+					nro_metadata.homebrew.asset_section_headers.icon.size.swap64();
+
+					nro_metadata.homebrew.asset_section_headers.nacp.file_offset.swap64();
+					nro_metadata.homebrew.asset_section_headers.nacp.size.swap64();
+
+					let icon_offset = nro_metadata.homebrew.asset_section_headers.icon.file_offset;
+					let icon_size = nro_metadata.homebrew.asset_section_headers.icon.size;
+					icon_offset = (icon_offset.readUInt32BE() << 8) + icon_offset.readUInt32BE(4) + nro_size.readUInt32LE();
+					icon_size = (icon_size.readUInt32BE() << 8) + icon_size.readUInt32BE(4);
+
+					let nacp_offset = nro_metadata.homebrew.asset_section_headers.nacp.file_offset;
+					let nacp_size = nro_metadata.homebrew.asset_section_headers.nacp.size;
+					nacp_offset = (nacp_offset.readUInt32BE() << 8) + nacp_offset.readUInt32BE(4) + nro_size.readUInt32LE();
+					nacp_size = (nacp_size.readUInt32BE() << 8) + nacp_size.readUInt32BE(4);
+					
+					const nro_icon = Buffer.alloc(icon_size);
+					fs.readSync(nro_stream, nro_icon, 0, icon_size, icon_offset);
+
+					const nro_nacp = Buffer.alloc(nacp_size);
+					fs.readSync(nro_stream, nro_nacp, 0, nacp_size, nacp_offset);
+
+					metadata.icon = `data:image/jpg;base64,${nro_icon.toString('base64')}`;
+					metadata.title = Buffer.from(nro_nacp.subarray(0, 0x200)).toString().replace(/\0/g, '');
+				}
 				break;
 			default:
 				break;
