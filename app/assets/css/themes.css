@@ -1,0 +1,31 @@
+/*
+	Themes
+*/
+
+/*Dark Theme*/
+[theme="dark"] {
+	background: var(--bg-d);
+}
+
+[theme="dark"] .app .games .game {
+	background: var(--game-bg-d);
+	border: 3px solid var(--border-d);
+}
+
+[theme="dark"] .app .icon{
+	background: var(--icon-bg-d);
+}
+
+/*Light Theme*/
+[theme="light"] {
+	background: var(--bg-l);
+}
+
+[theme="light"] .app .games .game {
+	background: var(--game-bg-l);
+	border: 3px solid var(--border-l);
+}
+
+[theme="light"] .app .icon {
+	background: var(--icon-bg-l);
+}

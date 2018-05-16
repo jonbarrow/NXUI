@@ -1,0 +1,233 @@
+/*
+	General
+*/
+body, * {
+	font-family: 'SwitchUI';
+	font-weight: bold;
+}
+
+html, body {
+	height: 100%;
+	max-height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	/*Light theme*/
+	--bg-l: #ECECEC;
+	--border-l: #FFFFFF;
+	--icon-bg-l: #FFFFFF;
+
+	/*Dark theme*/
+	--bg-d: #222222;
+	--game-bg-d: #252525;
+	--border-d: #303030;
+	--icon-bg-d: #505050;
+
+	/*Misc*/
+	--static: #2D2D2D;
+	--shadow: 0 0 5px rgba(0, 0, 0, .05);
+	--game-dimensions: 255px;
+	--focus-blue-1: #3FE9D3;
+	--focus-blue-2: #1670f6;
+	--game-title-blue: #16BCF6;
+	--icon-size: 60px;
+
+	margin: 0;
+	padding: 0;
+}
+
+.app {
+	height: 100%;
+	display: grid;
+	grid-template-areas:
+		"header"
+		"games"
+		"options"
+	;
+	grid-template-rows: 25% 50% 25%;
+}
+
+.active {
+	border-radius: 1px;
+	animation: border-focus 1s infinite;
+}
+
+.icon {
+	width: var(--icon-size);
+	height: var(--icon-size);
+}
+
+.icon {
+	border-radius: 100%;
+}
+
+.icon:hover {
+	cursor: pointer;
+}
+
+.icon img {
+	max-width: 100%;
+	max-height: auto;
+	border-radius: 100%;
+}
+
+/*
+	Header
+*/
+
+.header .icon,
+.header .clock {
+	margin: 2%;
+	vertical-align: middle;
+}
+
+.header .icon {
+	display: inline-block;
+}
+
+/*
+	Games
+*/
+
+.games {
+	display: grid;
+	grid-template-columns: repeat(13, 1fr); /*12 games + 1 extra for the "Show All Titles" option*/
+	grid-column-gap: 20px;
+	  
+	overflow: hidden;
+	overflow-x: scroll;
+}
+
+.games::-webkit-scrollbar {
+	display: none;
+}
+
+.games .game {
+	position: relative;
+	top: calc(12.5%); /*Hack for "position: relative;" veritcal centering*/
+
+	width: 255px;
+	height: 255px;
+}
+
+.games .game:first-of-type {
+	margin-left: 40px;
+}
+.games .game:last-of-type {
+	margin-right: 40px;
+}
+
+.games .game .game-icon {
+	width: 100%;
+	height: auto;
+}
+
+.games .game.clicked:before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(22, 188, 246, 0.3);
+}
+
+.games .game.clicked .game-icon {
+	width: 98%;
+	height: auto;
+	margin: 1%;
+}
+
+.games .game .title {
+	position: absolute;
+	width: 100%;
+
+	left: 50%;
+	top: calc(-12.5% - 25px); /*Reversing the games "top"*/
+	transform: translateX(-50%);
+
+	text-align: center;
+	font-size: 20px;
+
+	color: var(--game-title-blue);
+
+	overflow: hidden;
+
+	display: none;
+}
+
+.games .game.active .title {
+	display: block;
+}
+
+.games .game:hover {
+	cursor: pointer;
+}
+
+.games .game.active.wobble-left {
+	animation-name: wobble-horizontal-left;
+	animation-duration: 0.2s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+}
+
+.games .game.active.wobble-right {
+	animation-name: wobble-horizontal-right;
+	animation-duration: 0.2s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+}
+
+/*
+	Options
+*/
+
+.options {
+	position: relative;
+}
+
+.options .wrapper {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+	display: grid;
+	grid-template-columns: repeat(2, var(--icon-size));
+	grid-gap: calc(var(--icon-size) / 2);
+}
+
+.options .wrapper .option {
+	border-radius: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	position: relative;
+}
+
+.options .wrapper .option[option="controllers"] {
+	color: whitesmoke;
+}
+.options .wrapper .option[option="settings"] {
+	color: whitesmoke;
+}
+
+.options .wrapper .option .title {
+	position: absolute;
+	top: calc(var(--icon-size) / 1.5);
+	left: calc(var(--icon-size) / 2);
+	transform: translate(-50%);
+
+	font-size: 20px;
+
+	color: var(--game-title-blue);
+
+	display: none;
+}
+
+.options .wrapper .option.active .title {
+	display: block;
+}

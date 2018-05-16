@@ -1,0 +1,12 @@
+/*
+	Fonts
+*/
+@font-face {
+	font-family: 'RoomBold';
+	src: url('../fonts/Room Bold.ttf');
+}
+
+@font-face {
+	font-family: 'SwitchUI';
+	src: url('../fonts/Nintendo_Switch_UI_Font.ttf');
+}

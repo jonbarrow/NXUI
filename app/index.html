@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>NXUI</title>
+
+		<link rel="stylesheet" href="./assets/css/fonts.css">
+		<link rel="stylesheet" href="./assets/css/fontawesome-all.css">
+		<link rel="stylesheet" href="./assets/css/animations.css">
+		<link rel="stylesheet" href="./assets/css/index.css">
+		<link rel="stylesheet" href="./assets/css/notification.css">
+		<link rel="stylesheet" href="./assets/css/themes.css">
+
+		<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+		<script async defer src="./assets/js/index.js"></script>
+		<script async defer src="./assets/js/Controller.js"></script>
+        <script async defer src="./assets/js/Controller.layouts.js"></script>
+		<script async defer src="./assets/js/gamepad.js"></script>
+		<script async defer src="./assets/js/notification.js"></script>
+		<script async defer src="./assets/js/mouse.js"></script>
+		<script async defer src="./assets/js/ipc.js"></script>
+        <script>if (window.module) module = window.module;</script>
+	</head>
+	<body theme="dark">
+		<div class="app">
+			<div class="header">
+				<div class="profile icon">
+					<img src="./assets/images/mii_default.png" alt="user profile icon">
+				</div>
+			</div>
+			<div class="games"></div>
+			<div class="options">
+				<div class="wrapper">
+					<div class="icon option" option="controllers">
+						<i class="fas fa-2x fa-gamepad" style=" vertical-align: middle;"></i>
+						<p class="title">Controllers</p>
+					</div>
+					<div class="icon option" option="settings">
+						<i class="fas fa-2x fa-cog" style=" vertical-align: middle;"></i>
+						<p class="title">Settings</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="notification show" id="loader">
+			<div class="window">
+				<div class="content">
+					<p>
+						<i class="fas fa-spinner fa-spin fa-3x"></i>
+					</p>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="notifications"></div>
+
+
+		<template template="game">
+			<div class="game">
+				<p class="title">Game</p>
+				<img src="https://picsum.photos/255/?random" alt="" class="game-icon">
+			</div>
+		</template>
+
+		<template template="notification">
+			<div class="notification">
+				<div class="window">
+					<div class="content">
+						<p></p>
+					</div>
+					<div class="interaction"></div>
+				</div>
+			</div>
+		</template>
+	</body>
+</html>
